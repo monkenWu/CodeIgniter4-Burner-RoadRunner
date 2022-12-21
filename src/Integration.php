@@ -67,11 +67,16 @@ class Integration implements IntegrationInterface
         @chmod($targetPath, 0777 & ~umask());
     }
 
-    public function startServer(string $frontLoader)
+    public function startServer(string $frontLoader, string $commands = '')
     {
         $workDir    = __DIR__ . DIRECTORY_SEPARATOR;
         $configFile = ROOTPATH . '.rr.yaml';
-        $start      = popen("{$frontLoader} serve -w {$workDir} -c {$configFile}", 'w');
+        if ($commands === '') {
+            $start      = popen("{$frontLoader} serve -w {$workDir} -c {$configFile}", 'w');
+        } else {
+            $start      = popen("{$frontLoader} $commands -w {$workDir} -c {$configFile}", 'w');
+        }
+
         pclose($start);
         echo PHP_EOL;
     }
