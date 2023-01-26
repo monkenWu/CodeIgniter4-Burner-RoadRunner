@@ -27,3 +27,13 @@ http:
 #       ignore: [ "vendor" ]
 #       patterns: [ ".php", ".go", ".dmd" ]
 #       dirs: [ "{{reload_paths}}" ]
+
+# logs:
+#   mode: development
+#   output: stdout
+#   file_logger_options:
+#     log_output: "{{log_path}}"
+#     max_size: 100
+#     max_age: 1
+#     max_backups : 5
+#     compress: false

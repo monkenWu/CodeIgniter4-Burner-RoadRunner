@@ -6,11 +6,12 @@ This Library is the RoadRunner Driver for [CodeIgniter4 Burner](https://github.c
 
 ### Prerequisites
 1. CodeIgniter Framework 4.2.0^
-2. Composer
-3. PHP8^
-4. Enable `php-curl` extension
-5. Enable `php-zip` extension
-6. Enable `php-sockets` extension
+2. CodeIgniter4-Burner 0.4.0^
+3. Composer
+4. PHP8^
+5. Enable `php-curl` extension
+6. Enable `php-zip` extension
+7. Enable `php-sockets` extension
 
 ### Composer Install
 
@@ -28,55 +29,100 @@ php spark burner:init RoadRunner
 
 ## Command
 
+### start server
+
 When you do not pass any parameters, it will be preset to start the server.
 
 ```
-php spark burner:start RoadRunner
+php spark burner:start
 ```
 
-###  Stopping RR
-
-* Send a SIGINT or SIGTERM syscalls to the main RoadRunner process. Inside a k8s for example, this is done automatically when you're stopping the pod.
-* If you want to stop RR manually, you may hit a ctrl+c for the graceful stop or hit ctrl+c one more time to force stop.
-
-You may also use a commands:
+By default, burner reads the default driver written in `app/Burner.php`. Of course, you can force Burner to execute commands with the `RoadRunner` driver by using a parameter like this：
 
 ```
-php spark burner:start RoadRunner serve -p
+php spark burner:start --driver RoadRunner
+```
+
+> `--driver RoadRunner` This parameter also applies to all the commands mentioned below.
+
+You can also use the following parameters to construct your commands according to your needs.
+
+* -c: path to the config file.
+* -w: set the working directory.
+* --dotenv: populate the process with env variables from the .dotenv file.
+* -d: start a pprof server. Note, this is not debug, to use debug logs level, please, use logs: https://roadrunner.dev/docs/plugins-logger/2.x/en
+* -s: silent mode.
+* -o: to override configuration keys with your values, e.g.
+  ```
+  -o=http.address=:8080
+  ```
+  will override the http.address from the .rr.yaml.
+
+> Note that Burner already uses the `-c`, `-p` and `-w` parameters and you need to avoid using the same parameters again.
+
+#### daemon mode
+
+Let RoadRunner work in the background.
+
+When you run the server with this option, Burner will ignore the Automatic reload setting.
+
+```
+php spark burner:start --daemon
+```
+
+Using this mode Burner will direct the output to `/dev/null` and you must define your `log_output` in `.rr.yaml` to look like this:
+
+```yaml
+logs:
+  mode: development
+  output: stdout
+  file_logger_options:
+    log_output: "{{log_path}}"
+    max_size: 100
+    max_age: 1
+    max_backups : 5
+    compress: false
 ```
 
 ### stop server
 
-Where -p means: create a .pid file. And then:
+This command runs in daemon mode only.
 
 ```
-php spark burner:start RoadRunner stop
+php spark burner:stop
 ```
 
-Or to force stop:
+Force the server to close.
 
 ```
-php spark burner:start RoadRunner stop -f
+php spark burner:stop -f
+```
+
+### workers status
+
+Get the current running information of all Workers.
+
+```
+php spark burner:rr workers
+```
+
+Continuously updated interaction mode every second.
+
+```
+php spark burner:rr workers -i
 ```
 
 ### more command
 
+Run commands directly to RoadRunner's rr binary.
+
 ```
-php spark burner:start RoadRunner [serve, reset, workers, stop] [-Parameters]
+php spark burner:rr [rr_comands]
 ```
 
-* serve:
-    * --dotenv: populate the process with env variables from the .dotenv file.
-    * -d: start a pprof server. Note, this is not debug, to use debug logs level, please, use logs: https://roadrunner.dev/docs/plugins-logger/2.x/en
-    * -s: silent mode.
-    * -o: to override configuration keys with your values, e.g. -o=http.address=:8080 will override the http.address from the .rr.yaml.
-    * -p: create a .pid file to use ./rr stop later.
-* reset
-* workers:
-    * -i: interactive mode (update statistic every second).
-* stop:
-    * -f: force stop.
-    * -s: silent mode.
+You can refer to the official [RoadRunner documentation](https://roadrunner.dev/docs/app-server-cli/2.x/en) to construct your commands. 
+
+> Note that Burner already uses the `-c`, `-p` and `-w` parameters and you need to avoid using the same parameters again.
 
 ## RoadRunner Server Settings
 
@@ -141,7 +187,7 @@ reload:
 ```
 ### Developing and debugging in a environment with only one Worker
 
-Since the RoadRunner and Workerman has fundamentally difference with other server software(i.e. Nginx, Apache), every Codeigniter4 will persist inside RAMs as the form of Worker, HTTP requests will reuse these Workers to process. Hence, we have better develop and test stability under the circumstance with only one Worker to prove it can also work properly under serveral Workers in the formal environment.
+Since the RoadRunner has fundamentally difference with other server software(i.e. Nginx, Apache), every Codeigniter4 will persist inside RAMs as the form of Worker, HTTP requests will reuse these Workers to process. Hence, we have better develop and test stability under the circumstance with only one Worker to prove it can also work properly under serveral Workers in the formal environment.
 
 #### RoadRunner
 
