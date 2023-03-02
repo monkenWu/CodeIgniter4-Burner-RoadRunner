@@ -17,6 +17,8 @@ use Spiral\RoadRunner\Worker;
 $worker     = Worker::create();
 $psrFactory = new Psr17Factory();
 $psr7       = new PSR7Worker($worker, $psrFactory, $psrFactory, $psrFactory);
+// init burner
+\Monken\CIBurner\App::setConfig(config('Burner'));
 
 while (true) {
     // get psr7 request
