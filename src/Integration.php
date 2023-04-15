@@ -36,6 +36,7 @@ class Integration implements IntegrationInterface
         $logPath = realpath(WRITEPATH . 'logs') . DIRECTORY_SEPARATOR . 'RoadRunner.log';
         $rr      = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Files' . DIRECTORY_SEPARATOR . '.rr.yaml');
         $rr      = str_replace('{{front_loader}}', $frontLoader, $rr);
+        $rr      = str_replace('{{app_path}}', APPPATH, $rr);
         $rr      = str_replace('{{static_paths}}', ROOTPATH . 'public', $rr);
         $rr      = str_replace('{{reload_paths}}', realpath(APPPATH . '../'), $rr);
         $rr      = str_replace('{{log_path}}', $logPath, $rr);
