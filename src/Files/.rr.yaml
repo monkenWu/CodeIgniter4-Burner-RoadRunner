@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: "php Worker.php -f={{front_loader}}"
+  command: "php Worker.php -f={{front_loader}} -a={{app_path}}"
   # env:
   #   XDEBUG_SESSION: 1
 

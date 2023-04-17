@@ -1,11 +1,13 @@
 <?php
 
-$opt = getopt('f:');
+$opt = getopt('f:a:');
+define('APPPATH', $opt['a']);
 require_once $opt['f'];
 
 define('BURNER_DRIVER', 'RoadRunner');
 
 use Nyholm\Psr7\Factory\Psr17Factory;
+use CodeIgniter\Events\Events;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Spiral\RoadRunner\Http\PSR7Worker;
@@ -39,6 +41,7 @@ while (true) {
     // handle response object
     try {
         $psr7->respond($response);
+        Events::trigger('burnerAfterSendResponse', $psr7);
         \Monken\CIBurner\App::clean();
     } catch (Exception $e) {
         $psr7->respond(new Response(500, [], 'Something Went Wrong!'));
