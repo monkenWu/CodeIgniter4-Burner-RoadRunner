@@ -28,11 +28,7 @@ This Library is the RoadRunner Driver for [CodeIgniter4 Burner](https://github.c
 You can install this Driver with the following command.
 
 ```
-<<<<<<< HEAD
-composer require monken/codeigniter4-burner-roadrunner:^1.0@beta
-=======
 composer require monken/codeigniter4-burner-roadrunner:1.0.0-beta.3
->>>>>>> dev
 ```
 
 Initialize Server files using built-in commands in the library
